@@ -1,1 +1,335 @@
-# portfolio1
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>✦ Player One ✦ Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Caveat:wght@400..700&family=DM+Sans:opsz,wght@9..40,300..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- soft grid + grain backdrop -->
+<div class="page-bg" aria-hidden="true">
+  <div class="grid-paper"></div>
+  <div class="noise"></div>
+  <div class="aurora a1"></div>
+  <div class="aurora a2"></div>
+  <div class="aurora a3"></div>
+</div>
+
+<!-- floating dust / sparkles -->
+<div class="sparkles" aria-hidden="true">
+  <span class="spk" style="--x:8%;--y:18%;--d:0s;--s:1"></span>
+  <span class="spk" style="--x:22%;--y:62%;--d:2.3s;--s:.7"></span>
+  <span class="spk" style="--x:80%;--y:24%;--d:1.2s;--s:1.2"></span>
+  <span class="spk" style="--x:92%;--y:72%;--d:3.1s;--s:.9"></span>
+  <span class="spk" style="--x:48%;--y:88%;--d:4s;--s:1.1"></span>
+  <span class="spk" style="--x:68%;--y:8%;--d:1.8s;--s:.8"></span>
+</div>
+
+<!-- tiny navigation -->
+<nav class="topnav">
+  <span class="nav-mark">◯</span>
+  <span class="nav-title">PORTFOLIO &nbsp;•&nbsp; <em>chapter.01</em></span>
+  <span class="nav-actions">
+    <a href="#projects">projects ↓</a>
+    <a href="#contact">contact ✉</a>
+  </span>
+</nav>
+
+<!-- =============== HERO / ABOUT =============== -->
+<header class="hero">
+
+  <!-- masthead bar like manga magazine -->
+  <div class="masthead">
+    <div class="mast-left">
+      <span class="issue-no">N°<span class="issue-num">07</span></span>
+      <span class="issue-date">2026 · SPRING ISSUE</span>
+    </div>
+    <div class="mast-center">
+      <span class="mast-tag">— a story by you, the reader —</span>
+    </div>
+    <div class="mast-right">
+      <span class="barcode" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </span>
+      <span class="price">¥ 0000</span>
+    </div>
+  </div>
+
+  <div class="hero-grid">
+
+    <!-- LEFT: character popping out of frame -->
+    <div class="char-stage">
+      <!-- decorative star burst behind -->
+      <svg class="burst" viewBox="0 0 400 400" aria-hidden="true">
+        <defs>
+          <radialGradient id="burstGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffd9e8" stop-opacity=".9"/>
+            <stop offset="60%" stop-color="#ffe6d0" stop-opacity=".4"/>
+            <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="200" r="180" fill="url(#burstGrad)"/>
+      </svg>
+
+      <!-- floating doodle marks -->
+      <svg class="doodle d-heart" viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M20 34 C 4 22, 6 8, 14 8 C 18 8, 20 11, 20 14 C 20 11, 22 8, 26 8 C 34 8, 36 22, 20 34 Z"
+              fill="none" stroke="#e87aa2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <svg class="doodle d-spark" viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M20 4 L23 17 L36 20 L23 23 L20 36 L17 23 L4 20 L17 17 Z"
+              fill="#f5d76e" stroke="#c89a2e" stroke-width="1.2" stroke-linejoin="round"/>
+      </svg>
+      <svg class="doodle d-squiggle" viewBox="0 0 80 30" aria-hidden="true">
+        <path d="M2 15 Q 12 2, 22 15 T 42 15 T 62 15 T 78 15"
+              fill="none" stroke="#8da8c8" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>
+
+      <!-- the polaroid / panel frame -->
+      <div class="panel-frame">
+        <div class="panel-tape t1" aria-hidden="true"></div>
+        <div class="panel-tape t2" aria-hidden="true"></div>
+
+        <!-- corners -->
+        <span class="corner c-tl"></span>
+        <span class="corner c-tr"></span>
+        <span class="corner c-bl"></span>
+        <span class="corner c-br"></span>
+
+        <!-- inner background of panel (clipped) -->
+        <div class="panel-inner">
+          <!-- soft halftone behind character -->
+          <div class="halftone"></div>
+          <div class="rays" aria-hidden="true"></div>
+        </div>
+
+        <!-- character — sibling of panel-inner so it can pop ABOVE top edge -->
+        <img class="char-img" src="assets/character.png" alt="character portrait" />
+
+        <!-- caption strip at bottom of panel -->
+        <div class="panel-caption">
+          <span class="cap-label">CHAR_001</span>
+          <span class="cap-name">— GIANG / プレイヤー —</span>
+          <span class="cap-meta">LV.24 · GAME DESIGNER</span>
+        </div>
+      </div>
+
+      <!-- floating "name plate" -->
+      <div class="nameplate">
+        <span class="np-line">player one</span>
+        <span class="np-sub">press [ ↓ ] to begin</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: about content, masthead style -->
+    <div class="hero-text">
+
+      <!-- the huge title -->
+      <h1 class="bigtitle">
+        <span class="title-eyebrow">⌜ press start ⌟</span>
+        <span class="title-main">
+          Hello<span class="title-comma">,</span>
+          <span class="title-italic">stranger</span>
+        </span>
+        <span class="title-underline" aria-hidden="true"></span>
+      </h1>
+
+      <!-- intro paragraph in a dialogue-box style -->
+      <div class="dialogue">
+        <div class="dlg-tab">about · 自己紹介</div>
+        <p class="dlg-text">
+          I'm <strong>Giang</strong> — a game designer crafting small worlds with soft edges. I build interactive stories,
+          systems that feel like discoveries, and quiet moments players keep in their pocket. Mostly i make things that feel
+          like a held breath, right before something good happens.
+        </p>
+        <span class="dlg-arrow" aria-hidden="true">▸</span>
+      </div>
+
+      <!-- stats grid like an RPG character sheet -->
+      <div class="stats">
+        <div class="stat-card">
+          <span class="stat-key">CLASS</span>
+          <span class="stat-val">Game Designer</span>
+          <span class="stat-bar"><i style="--p:92%"></i></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-key">SUBCLASS</span>
+          <span class="stat-val">Narrative · UX · Systems</span>
+          <span class="stat-bar"><i style="--p:84%"></i></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-key">ORIGIN</span>
+          <span class="stat-val">Hanoi, Vietnam</span>
+          <span class="stat-bar"><i style="--p:70%"></i></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-key">YEAR</span>
+          <span class="stat-val">Active since 2021</span>
+          <span class="stat-bar"><i style="--p:55%"></i></span>
+        </div>
+      </div>
+
+      <!-- skill chips / inventory -->
+      <div class="inventory">
+        <div class="inv-header">
+          <span>◇ inventory</span>
+          <span class="inv-count">07 / 07</span>
+        </div>
+        <div class="inv-slots">
+          <span class="slot" data-tip="Unity"><b>U</b><i>Unity</i></span>
+          <span class="slot" data-tip="Unreal"><b>UE</b><i>Unreal</i></span>
+          <span class="slot" data-tip="Figma"><b>Fg</b><i>Figma</i></span>
+          <span class="slot" data-tip="Blender"><b>Bl</b><i>Blender</i></span>
+          <span class="slot" data-tip="Twine"><b>Tw</b><i>Twine</i></span>
+          <span class="slot" data-tip="Photoshop"><b>Ps</b><i>Photoshop</i></span>
+          <span class="slot" data-tip="Procreate"><b>Pr</b><i>Procreate</i></span>
+        </div>
+      </div>
+
+      <!-- abilities, in side-quest style -->
+      <div class="side-quests">
+        <div class="sq-title">— current side quests —</div>
+        <ul>
+          <li><span>◆</span> Designing a slow-life cozy game ( <i>writing chapter 03</i> )</li>
+          <li><span>◇</span> A two-player narrative card prototype</li>
+          <li><span>◆</span> Studying somatic UI &amp; ambient storytelling</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- scroll cue -->
+  <a href="#projects" class="scroll-cue">
+    <span class="cue-text">turn the page</span>
+    <span class="cue-arrow">↓</span>
+  </a>
+</header>
+
+
+<!-- =============== PROJECTS =============== -->
+<section id="projects" class="projects">
+
+  <div class="section-head">
+    <span class="sh-line"></span>
+    <div class="sh-titlewrap">
+      <span class="sh-kicker">— chapter 02 —</span>
+      <h2 class="sh-title">selected <em>worlds</em></h2>
+      <span class="sh-sub">each tile opens a different door. mind your step.</span>
+    </div>
+    <span class="sh-line"></span>
+  </div>
+
+  <div class="banners">
+
+    <!-- PROJECT 1 -->
+    <a href="#" class="banner b-tall" data-num="01" style="--accent:#e87aa2;--accent-soft:#fde2ec">
+      <div class="banner-inner">
+        <div class="banner-image" data-label="PROJECT&nbsp;01"></div>
+        <div class="banner-overlay">
+          <span class="bn-num">01</span>
+          <span class="bn-tag">SCENE · I</span>
+          <h3 class="bn-title">project one</h3>
+          <p class="bn-meta">narrative · 2024</p>
+          <span class="bn-cta">enter →</span>
+        </div>
+        <div class="banner-glare"></div>
+      </div>
+      <div class="banner-shadow"></div>
+    </a>
+
+    <!-- PROJECT 2 -->
+    <a href="#" class="banner b-wide" data-num="02" style="--accent:#7ea7c8;--accent-soft:#e1edf7">
+      <div class="banner-inner">
+        <div class="banner-image" data-label="PROJECT&nbsp;02"></div>
+        <div class="banner-overlay">
+          <span class="bn-num">02</span>
+          <span class="bn-tag">SCENE · II</span>
+          <h3 class="bn-title">project two</h3>
+          <p class="bn-meta">systems · 2024</p>
+          <span class="bn-cta">enter →</span>
+        </div>
+        <div class="banner-glare"></div>
+      </div>
+      <div class="banner-shadow"></div>
+    </a>
+
+    <!-- PROJECT 3 -->
+    <a href="#" class="banner b-wide" data-num="03" style="--accent:#c8a87e;--accent-soft:#f5ead8">
+      <div class="banner-inner">
+        <div class="banner-image" data-label="PROJECT&nbsp;03"></div>
+        <div class="banner-overlay">
+          <span class="bn-num">03</span>
+          <span class="bn-tag">SCENE · III</span>
+          <h3 class="bn-title">project three</h3>
+          <p class="bn-meta">prototype · 2025</p>
+          <span class="bn-cta">enter →</span>
+        </div>
+        <div class="banner-glare"></div>
+      </div>
+      <div class="banner-shadow"></div>
+    </a>
+
+    <!-- PROJECT 4 -->
+    <a href="#" class="banner b-tall" data-num="04" style="--accent:#9bb89a;--accent-soft:#e6efdf">
+      <div class="banner-inner">
+        <div class="banner-image" data-label="PROJECT&nbsp;04"></div>
+        <div class="banner-overlay">
+          <span class="bn-num">04</span>
+          <span class="bn-tag">SCENE · IV</span>
+          <h3 class="bn-title">project four</h3>
+          <p class="bn-meta">UX · 2025</p>
+          <span class="bn-cta">enter →</span>
+        </div>
+        <div class="banner-glare"></div>
+      </div>
+      <div class="banner-shadow"></div>
+    </a>
+
+    <!-- PROJECT 5 (full width feature) -->
+    <a href="#" class="banner b-full" data-num="05" style="--accent:#b89ac8;--accent-soft:#eee2f5">
+      <div class="banner-inner">
+        <div class="banner-image" data-label="PROJECT&nbsp;05"></div>
+        <div class="banner-overlay">
+          <span class="bn-num">05</span>
+          <span class="bn-tag">— FINAL SCENE —</span>
+          <h3 class="bn-title">project five</h3>
+          <p class="bn-meta">a feature-length world</p>
+          <span class="bn-cta">enter the final chapter →</span>
+        </div>
+        <div class="banner-glare"></div>
+      </div>
+      <div class="banner-shadow"></div>
+    </a>
+
+  </div>
+</section>
+
+<!-- =============== END / FOOTER =============== -->
+<footer id="contact" class="endcard">
+  <div class="end-tape t1"></div>
+  <div class="end-tape t2"></div>
+
+  <div class="end-inner">
+    <span class="end-kicker">— end of preview —</span>
+    <h2 class="end-title">thanks for <em>reading</em></h2>
+    <p class="end-sub">
+      to continue the story, send a letter.
+    </p>
+    <div class="end-links">
+      <a href="mailto:hello@example.com" class="end-link">✉ &nbsp; hello@example.com</a>
+      <a href="#" class="end-link">◐ &nbsp; @yourhandle</a>
+      <a href="#" class="end-link">◇ &nbsp; itch.io / yourname</a>
+    </div>
+    <span class="end-credit">© 2026 · player one · all soft rights reserved</span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
