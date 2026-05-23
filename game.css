@@ -1,0 +1,374 @@
+/* ================================================================
+   ✦ tiny planet — engine ✦
+   The character is visually fixed at the top of the planet.
+   Walking rotates the WORLD beneath them.
+   ================================================================ */
+
+(() => {
+
+  // ---------------------------------------------------------------
+  // CONSTANTS
+  // ---------------------------------------------------------------
+  const SPEED = 35;            // degrees per second around planet
+  const PLANET_RADIUS = 400;   // SVG units — matches viewBox
+
+  // each object placed on the planet at a specific angle (deg)
+  // these MUST match the rotate() values in the HTML
+  const OBJECTS = [
+    { id: 'door',     angle: 0,   name: '— a door, standing alone —',
+      lines: [
+        "There's a door here, but no walls. No frame around the world. It opens to somewhere else — the other planets, where I keep the things I've made.",
+        "When you're ready to see the projects, come back to this door."
+      ] },
+    { id: 'phone',    angle: 45,  name: '— a telephone, ringing —',
+      lines: [
+        "It's been ringing since I got here. I never pick it up. I don't know who I'm waiting to call.",
+        "If you pick it up, you can reach me. hello@example.com works too, less mysterious."
+      ] },
+    { id: 'chair',    angle: 90,  name: '— a chair facing the void —',
+      lines: [
+        "I sit here sometimes. It faces out toward nothing, which is the point.",
+        "I'm Giang. Game designer. I make small worlds — narrative, UX, systems — for people who like sitting in chairs facing voids."
+      ] },
+    { id: 'stairs',   angle: 135, name: '— stairs to nothing —',
+      lines: [
+        "They end before they reach anything. I keep meaning to add another step.",
+        "I think about unfinished things a lot. Most of my best ideas are still on these stairs."
+      ] },
+    { id: 'tree',     angle: 180, name: '— a tree, watching —',
+      lines: [
+        "She has eyes. She blinks sometimes. I planted her when I first arrived and she grew like this.",
+        "I think the trees on this planet remember who you used to be. It's not a comfort, exactly. But it's something."
+      ] },
+    { id: 'mailbox',  angle: 225, name: '— a mailbox —',
+      lines: [
+        "Empty. Always empty. The flag is up anyway.",
+        "I send a lot of letters from here. None of them go anywhere. That's still a thing worth doing."
+      ] },
+    { id: 'bed',      angle: 270, name: '— a small bed —',
+      lines: [
+        "Someone's sleeping. I don't ask who. We have an understanding.",
+        "When I'm tired of being awake here, I lie down next to them. We both pretend not to notice."
+      ] },
+    { id: 'umbrella', angle: 315, name: '— a floating umbrella —',
+      lines: [
+        "It never quite touches the ground. I don't know how long it's been like that. Some days it follows me a little.",
+        "Active since 2021. Hanoi. Three internships, one degree. The umbrella came later."
+      ] },
+  ];
+
+  const dialogueIndex = {};
+  OBJECTS.forEach(o => dialogueIndex[o.id] = 0);
+
+  // ---------------------------------------------------------------
+  // STATE
+  // ---------------------------------------------------------------
+  const state = {
+    // start a bit offset from any object so player has room
+    worldRot: 22,
+
+    // input
+    keys: { left: false, right: false },
+    interactPressed: false,
+
+    // movement
+    moving: false,
+    facing: 1,
+
+    // interaction
+    nearby: null,
+    dialogueOpen: false,
+    typing: null,
+
+    introHidden: false,
+  };
+
+  // ---------------------------------------------------------------
+  // DOM
+  // ---------------------------------------------------------------
+  const stageEl   = document.getElementById('planet-stage');
+  const planetEl  = document.getElementById('planet');
+  const playerEl  = document.getElementById('player-sprite');
+  const promptEl  = document.getElementById('prompt');
+  const promptTextEl = promptEl.querySelector('.prompt-text');
+  const dlgEl     = document.getElementById('dialogue');
+  const dlgName   = dlgEl.querySelector('.dlg-name');
+  const dlgText   = dlgEl.querySelector('.dlg-text');
+  const introEl   = document.getElementById('intro-hint');
+  const starsEl   = document.getElementById('stars');
+  const compassDot= document.getElementById('compass-dot');
+
+  // ---------------------------------------------------------------
+  // STARS — sprinkle randomly in the void
+  // ---------------------------------------------------------------
+  function spawnStars() {
+    const N = 120;
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < N; i++) {
+      const s = document.createElement('span');
+      s.className = 'star';
+      s.style.left = (Math.random() * 100) + '%';
+      s.style.top = (Math.random() * 100) + '%';
+      s.style.animationDelay = (Math.random() * 4) + 's';
+      s.style.animationDuration = (3 + Math.random() * 4) + 's';
+      const size = 1 + Math.random() * 2;
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      frag.appendChild(s);
+    }
+    starsEl.appendChild(frag);
+  }
+  spawnStars();
+
+  // ---------------------------------------------------------------
+  // INPUT
+  // ---------------------------------------------------------------
+  document.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
+    switch (e.key) {
+      case 'ArrowLeft': case 'a': case 'A':
+        state.keys.left = true; hideIntro(); break;
+      case 'ArrowRight': case 'd': case 'D':
+        state.keys.right = true; hideIntro(); break;
+      case 'e': case 'E': case ' ': case 'Enter':
+        e.preventDefault();
+        state.interactPressed = true; hideIntro(); break;
+      case 'Escape':
+        if (state.dialogueOpen) closeDialogue();
+        break;
+    }
+  });
+  document.addEventListener('keyup', (e) => {
+    switch (e.key) {
+      case 'ArrowLeft': case 'a': case 'A': state.keys.left = false; break;
+      case 'ArrowRight': case 'd': case 'D': state.keys.right = false; break;
+    }
+  });
+
+  // touch
+  document.addEventListener('touchstart', (e) => {
+    if (state.dialogueOpen) { state.interactPressed = true; return; }
+    const t = e.touches[0];
+    if (t.clientX < window.innerWidth / 2) {
+      state.keys.left = true; state.keys.right = false;
+    } else {
+      state.keys.right = true; state.keys.left = false;
+    }
+    hideIntro();
+  }, { passive: true });
+  document.addEventListener('touchend', () => {
+    state.keys.left = false; state.keys.right = false;
+  });
+
+  function hideIntro() {
+    if (state.introHidden) return;
+    state.introHidden = true;
+    introEl.classList.add('fade');
+    setTimeout(() => introEl.style.display = 'none', 1400);
+  }
+
+  // ---------------------------------------------------------------
+  // PLAYER ANCHOR — position fixed at top of planet visually
+  // The planet center is at viewport (50%, 60% + planet visual radius).
+  // Player feet sit at top of the planet circle.
+  // ---------------------------------------------------------------
+  function positionPlayer() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    // SVG planet circle r=400 in viewBox -500..500. SVG is 200vh wide.
+    // 1 viewBox unit = 0.2vh. Planet visible radius = 400 * 0.2 = 80vh.
+    // The grass ring extends slightly outside r=400, but visually
+    // the "ground level" is right at r=400 so player feet sit there.
+    const planetRadius  = vh * 0.8;
+    const planetCenterY = vh * 0.6 + planetRadius;
+
+    const fx = vw / 2;
+    // player feet at top of planet surface, plus a small offset so feet sink into ground
+    const fy = planetCenterY - planetRadius + 4;
+
+    playerEl.style.left = fx + 'px';
+    playerEl.style.top  = fy + 'px';
+  }
+
+  // ---------------------------------------------------------------
+  // PLANET ROTATION
+  // The planet visually rotates by -worldRot.
+  // We also need to position the planet so its center is at (50%, 60%).
+  // ---------------------------------------------------------------
+  function updatePlanet() {
+    // stageEl is positioned at viewport (50%, 60vh + 100vh) via CSS,
+    // with width/height 0. We just rotate around that origin.
+    stageEl.style.transform = `rotate(${-state.worldRot}deg)`;
+
+    // update compass
+    const rad = state.worldRot * Math.PI / 180;
+    const dx = Math.sin(rad) * 18;
+    const dy = -Math.cos(rad) * 18;
+    compassDot.setAttribute('cx', dx.toFixed(2));
+    compassDot.setAttribute('cy', dy.toFixed(2));
+  }
+
+  // ---------------------------------------------------------------
+  // PROXIMITY — which object is closest to the player's position?
+  // Player is at world angle = state.worldRot (her position on the planet).
+  // Each object sits at its own angle. Find the smallest angular distance.
+  // ---------------------------------------------------------------
+  function angleDiff(a, b) {
+    let d = ((a - b) % 360 + 540) % 360 - 180;
+    return d;
+  }
+
+  function updateProximity() {
+    const playerAngle = ((state.worldRot % 360) + 360) % 360;
+
+    let closest = null;
+    let closestDiff = 999;
+    const NEAR_THRESHOLD = 14; // degrees
+
+    for (const obj of OBJECTS) {
+      const diff = Math.abs(angleDiff(obj.angle, playerAngle));
+      if (diff < NEAR_THRESHOLD && diff < closestDiff) {
+        closest = obj;
+        closestDiff = diff;
+      }
+    }
+
+    // update highlight
+    document.querySelectorAll('.planet-obj').forEach(el => {
+      const id = el.dataset.id;
+      el.classList.toggle('active', closest && closest.id === id);
+    });
+
+    state.nearby = closest;
+
+    // update prompt
+    if (closest && !state.dialogueOpen) {
+      promptEl.classList.remove('hidden');
+      promptTextEl.textContent = closest.id === 'door' ? 'enter' : 'look';
+
+      // compute prompt position on screen
+      const visualOffsetDeg = angleDiff(closest.angle, playerAngle);
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const planetR = vh * 0.8;
+      const planetCenterY = vh * 0.6 + planetR;
+      const cx = vw / 2;
+      const angRad = (visualOffsetDeg) * Math.PI / 180;
+      const ox = cx + Math.sin(angRad) * planetR;
+      const oy = planetCenterY - Math.cos(angRad) * planetR - 80;
+
+      promptEl.style.left = ox + 'px';
+      promptEl.style.top  = oy + 'px';
+    } else {
+      promptEl.classList.add('hidden');
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // DIALOGUE
+  // ---------------------------------------------------------------
+  function openDialogue(obj) {
+    state.dialogueOpen = true;
+    const idx = dialogueIndex[obj.id] % obj.lines.length;
+    dialogueIndex[obj.id]++;
+    const line = obj.lines[idx];
+
+    dlgName.textContent = obj.name;
+    dlgText.textContent = '';
+    dlgText._full = line;
+    dlgEl.classList.remove('hidden');
+
+    let i = 0;
+    if (state.typing) clearInterval(state.typing);
+    state.typing = setInterval(() => {
+      if (i >= line.length) {
+        clearInterval(state.typing);
+        state.typing = null;
+        return;
+      }
+      dlgText.textContent = line.slice(0, ++i);
+    }, 22);
+  }
+
+  function closeDialogue() {
+    state.dialogueOpen = false;
+    dlgEl.classList.add('hidden');
+    if (state.typing) {
+      clearInterval(state.typing);
+      state.typing = null;
+    }
+  }
+
+  // ---------------------------------------------------------------
+  // MAIN LOOP
+  // ---------------------------------------------------------------
+  let lastTime = performance.now();
+  function step(now) {
+    const dt = Math.min(0.05, (now - lastTime) / 1000);
+    lastTime = now;
+
+    if (!state.dialogueOpen) {
+      let inputX = 0;
+      if (state.keys.left)  inputX -= 1;
+      if (state.keys.right) inputX += 1;
+
+      state.worldRot += inputX * SPEED * dt;
+      state.moving = inputX !== 0;
+      if (inputX > 0) state.facing = 1;
+      else if (inputX < 0) state.facing = -1;
+    } else {
+      state.moving = false;
+    }
+
+    if (state.interactPressed) {
+      state.interactPressed = false;
+      if (state.dialogueOpen) {
+        if (state.typing) {
+          clearInterval(state.typing);
+          state.typing = null;
+          if (dlgText._full) dlgText.textContent = dlgText._full;
+        } else {
+          closeDialogue();
+        }
+      } else if (state.nearby) {
+        openDialogue(state.nearby);
+      }
+    }
+
+    // visual states
+    playerEl.classList.toggle('walking', state.moving);
+    playerEl.classList.toggle('idle', !state.moving);
+    playerEl.classList.toggle('facing-left', state.facing === -1);
+
+    positionPlayer();
+    updatePlanet();
+    updateProximity();
+
+    requestAnimationFrame(step);
+  }
+
+  // glance occasionally
+  setInterval(() => {
+    if (!state.moving && !state.dialogueOpen && Math.random() < 0.35) {
+      playerEl.classList.add('glance');
+      setTimeout(() => playerEl.classList.remove('glance'), 600);
+    }
+  }, 4500);
+
+  // ---------------------------------------------------------------
+  // RESIZE
+  // ---------------------------------------------------------------
+  window.addEventListener('resize', () => {
+    positionPlayer();
+  });
+
+  // ---------------------------------------------------------------
+  // GO
+  // ---------------------------------------------------------------
+  positionPlayer();
+  updatePlanet();
+  requestAnimationFrame((t) => { lastTime = t; step(t); });
+
+  window.__state = state;
+})();
